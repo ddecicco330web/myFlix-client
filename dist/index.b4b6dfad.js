@@ -1,3 +1,11 @@
+/* eslint-disable no-fallthrough */
+/* eslint-disable no-cond-assign */
+/* eslint-disable no-func-assign */
+/* eslint-disable no-undef */
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-undef */
+/* eslint-disable no-undef */
+/* eslint-disable no-undef */
 // modules are defined as an array
 // [ module function, map of requires ]
 //
