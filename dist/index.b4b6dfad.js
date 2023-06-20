@@ -27311,20 +27311,21 @@ const MainView = ()=>{
     const [movies, setMovies] = (0, _react.useState)([]);
     (0, _react.useEffect)(()=>{
         fetch("https://my-flix330.herokuapp.com/movies").then((response)=>response.json()).then((data)=>{
-            const moviesFromAPI = data.docs.map((doc)=>{
+            const moviesFromAPI = data.map((doc)=>{
                 return {
                     id: doc._id,
-                    title: doc.title,
+                    title: doc.Title,
                     director: {
-                        name: doc.director.name
+                        name: doc.Director?.[0].Name
                     },
-                    description: doc.description,
+                    description: doc.Description,
                     genre: {
-                        name: doc.genre.name
+                        name: doc.Genre?.Name
                     },
-                    image: doc.imagePath
+                    image: doc.ImagePath
                 };
             });
+            console.log(moviesFromAPI);
             setMovies(moviesFromAPI);
         }).catch((err)=>console.log(err));
     }, []);
@@ -27343,7 +27344,7 @@ const MainView = ()=>{
         children: "There are no movies!"
     }, void 0, false, {
         fileName: "src/components/main-view/main-view.jsx",
-        lineNumber: 46,
+        lineNumber: 45,
         columnNumber: 12
     }, undefined);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -27355,13 +27356,13 @@ const MainView = ()=>{
                 }
             }, movie.id, false, {
                 fileName: "src/components/main-view/main-view.jsx",
-                lineNumber: 53,
+                lineNumber: 52,
                 columnNumber: 11
             }, undefined);
         })
     }, void 0, false, {
         fileName: "src/components/main-view/main-view.jsx",
-        lineNumber: 50,
+        lineNumber: 49,
         columnNumber: 5
     }, undefined);
 };
@@ -27399,20 +27400,21 @@ const MovieCard = ({ movie , onMovieClick  })=>{
         lineNumber: 5,
         columnNumber: 5
     }, undefined);
-}; // MovieCard.proptypes = {
- //   movie: PropTypes.shape({
- //     title: PropTypes.string.isRequired,
- //     description: PropTypes.string,
- //     director: PropTypes.shape({
- //       name: PropTypes.string.isRequired
- //     }).isRequired,
- //     genre: PropTypes.shape({
- //       name: PropTypes.string
- //     })
- //   }).isRequired,
- //   onMovieClick: PropTypes.func.isRequired
- // };
+};
 _c = MovieCard;
+MovieCard.proptypes = {
+    movie: (0, _propTypesDefault.default).shape({
+        title: (0, _propTypesDefault.default).string.isRequired,
+        description: (0, _propTypesDefault.default).string,
+        director: (0, _propTypesDefault.default).shape({
+            name: (0, _propTypesDefault.default).string.isRequired
+        }).isRequired,
+        genre: (0, _propTypesDefault.default).shape({
+            name: (0, _propTypesDefault.default).string
+        })
+    }).isRequired,
+    onMovieClick: (0, _propTypesDefault.default).func.isRequired
+};
 var _c;
 $RefreshReg$(_c, "MovieCard");
 

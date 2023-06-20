@@ -9,21 +9,21 @@ export const MainView = () => {
     fetch('https://my-flix330.herokuapp.com/movies')
       .then((response) => response.json())
       .then((data) => {
-        const moviesFromAPI = data.docs.map((doc) => {
+        const moviesFromAPI = data.map((doc) => {
           return {
             id: doc._id,
-            title: doc.title,
+            title: doc.Title,
             director: {
-              name: doc.director.name
+              name: doc.Director?.[0].Name
             },
-            description: doc.description,
+            description: doc.Description,
             genre: {
-              name: doc.genre.name
+              name: doc.Genre?.Name
             },
-            image: doc.imagePath
+            image: doc.ImagePath
           };
         });
-
+        console.log(moviesFromAPI);
         setMovies(moviesFromAPI);
       })
       .catch((err) => console.log(err));
@@ -41,7 +41,6 @@ export const MainView = () => {
       />
     );
   }
-
   if (movies.length === 0) {
     return <div>There are no movies!</div>;
   }
