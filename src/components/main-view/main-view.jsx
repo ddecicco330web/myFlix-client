@@ -4,6 +4,7 @@ import { MovieView } from '../movie-view/movie-view';
 
 export const MainView = () => {
   const [movies, setMovies] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   useEffect(() => {
     fetch('https://my-flix330.herokuapp.com/movies')
@@ -28,8 +29,6 @@ export const MainView = () => {
       })
       .catch((err) => console.log(err));
   }, []);
-
-  const [selectedMovie, setSelectedMovie] = useState(null);
 
   if (selectedMovie) {
     const similarMovies = movies.filter(
