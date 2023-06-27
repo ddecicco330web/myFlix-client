@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { login } from '../../services/api-calls';
 
 export const LoginView = ({ onLoggedIn }) => {
   const [username, setUsername] = useState('');
@@ -7,31 +8,7 @@ export const LoginView = ({ onLoggedIn }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    fetch(
-      'https://my-flix330.herokuapp.com/login?' +
-        new URLSearchParams({
-          Username: username,
-          Password: password
-        }),
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Login response: ', data);
-        if (data.user) {
-          localStorage.setItem('user', JSON.stringify(data.user));
-          localStorage.setItem('token', data.token);
-          onLoggedIn(data.user, data.token);
-        } else {
-          alert('No such user');
-        }
-      })
-      .catch((e) => {
-        alert('Something went wrong');
-      });
+    login(username, password, onLoggedIn);
   };
 
   return (
