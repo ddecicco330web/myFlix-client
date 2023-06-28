@@ -1,1 +1,21 @@
+$primary: Navy;
+$secondary: #84a7a1;
+
 @import '~bootstrap/scss/bootstrap.scss';
+
+.no-border {
+  border: none;
+}
+
+.custom-card {
+  border-width: 4;
+}
+
+.movie-card {
+  cursor: pointer;
+}
+
+.movie-card:hover,
+.movie-card:focus {
+  opacity: 0.7;
+}
