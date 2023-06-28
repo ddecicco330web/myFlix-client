@@ -49,6 +49,7 @@ export const MainView = () => {
   return (
     <Row className="justify-content-md-center">
       {!user ? (
+        ///// Login/Signup View /////
         <Col md={5}>
           <LoginView
             onLoggedIn={(user, token) => {
@@ -60,41 +61,46 @@ export const MainView = () => {
           <SignupView />
         </Col>
       ) : selectedMovie ? (
-        <Col md={8}>
-          <MovieView
-            movie={selectedMovie}
-            onBackClick={() => {
-              setSelectedMovie(null);
-            }}
-          />
-          <div>
+        ///// Movie View /////
+        <>
+          <Col md={8}>
+            <MovieView
+              movie={selectedMovie}
+              onBackClick={() => {
+                setSelectedMovie(null);
+              }}
+            />
+          </Col>
+          <Row className="justify-content-md-center">
             <hr />
-            <h2>Similar Movies</h2>
-          </div>
-          <div>
+            <Col md={3}>
+              <h2>Similar Movies</h2>
+            </Col>
+          </Row>
+          <Row className="justify-content-md-center">
             {movies
               .filter(
                 (movie) =>
                   movie.genre.name === selectedMovie.genre.name &&
                   movie.title !== selectedMovie.title
               )
-              .map((movie) => {
-                return (
+              .map((movie) => (
+                <Col className="mb-5" key={movie.id} md={3}>
                   <MovieCard
-                    key={movie.id}
                     movie={movie}
-                    movies={movies}
                     onMovieClick={(newSelectedMovie) => {
                       setSelectedMovie(newSelectedMovie);
                     }}
                   />
-                );
-              })}
-          </div>
-        </Col>
+                </Col>
+              ))}
+          </Row>
+        </>
       ) : movies.length === 0 ? (
+        ///// No Movies /////
         <Col>There are no movies!</Col>
       ) : (
+        ///// View All Movie Cards /////
         <>
           <Col className="mb-5">
             <Button
