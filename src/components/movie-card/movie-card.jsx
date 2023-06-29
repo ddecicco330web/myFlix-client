@@ -4,7 +4,8 @@ import Card from 'react-bootstrap/Card';
 export const MovieCard = ({ movie, onMovieClick }) => {
   return (
     <Card
-      className="h-100"
+      bg="secondary"
+      className="h-100 custom-card movie-card"
       onClick={() => {
         onMovieClick(movie);
       }}
@@ -12,7 +13,7 @@ export const MovieCard = ({ movie, onMovieClick }) => {
       <Card.Img variant="top" src={movie.image} />
       <Card.Body>
         <Card.Title>{movie.title}</Card.Title>
-        <Card.Text>{movie.director}</Card.Text>
+        <Card.Text>{movie.director.name}</Card.Text>
       </Card.Body>
     </Card>
   );
