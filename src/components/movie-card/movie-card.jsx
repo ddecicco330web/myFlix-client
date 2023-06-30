@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import Card from 'react-bootstrap/Card';
+import { Link } from 'react-router-dom';
 
-export const MovieCard = ({ movie, onMovieClick }) => {
+export const MovieCard = ({ movie }) => {
   return (
     <Card
+      as={Link}
+      to={`/movies/${encodeURIComponent(movie.title)}`}
       bg="secondary"
       className="h-100 custom-card movie-card"
-      onClick={() => {
-        onMovieClick(movie);
-      }}
     >
       <Card.Img variant="top" src={movie.image} />
       <Card.Body>
@@ -29,6 +29,5 @@ MovieCard.proptypes = {
     genre: PropTypes.shape({
       name: PropTypes.string
     })
-  }).isRequired,
-  onMovieClick: PropTypes.func.isRequired
+  }).isRequired
 };

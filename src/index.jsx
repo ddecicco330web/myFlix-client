@@ -6,9 +6,9 @@ import './index.scss';
 
 const MyApplication = () => {
   return (
-    <Container>
-      <MainView />
-    </Container>
+    //<Container>
+    <MainView />
+    //</Container>
   );
 };
 
