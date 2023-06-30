@@ -6,6 +6,7 @@ import { SignupView } from '../signup-view/signup-view';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 export const MainView = () => {
   const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -47,88 +48,123 @@ export const MainView = () => {
   }, [token]);
 
   return (
-    <Row className="justify-content-md-center">
-      {!user ? (
-        ///// Login/Signup View /////
-        <Col md={5}>
-          <LoginView
-            onLoggedIn={(user, token) => {
-              setUser(user);
-              setToken(token);
-            }}
+    <BrowserRouter>
+      <Row className="justify-content-md-center">
+        <Routes>
+          <Route
+            path="/signup"
+            element={
+              <>
+                {user ? (
+                  <Navigate to="/" />
+                ) : (
+                  <Col md={5}>
+                    <SignupView />
+                  </Col>
+                )}
+              </>
+            }
           />
-          or
-          <SignupView />
-        </Col>
-      ) : selectedMovie ? (
-        ///// Movie View /////
-        <>
-          <Col md={8}>
-            <MovieView
-              movie={selectedMovie}
-              onBackClick={() => {
-                setSelectedMovie(null);
-              }}
-            />
-          </Col>
-          <Row className="justify-content-md-center">
-            <hr />
-            <Col md={3}>
-              <h2>Similar Movies</h2>
+          <Route
+            path="/login"
+            element={
+              <>
+                {user ? (
+                  <Navigate to="/" />
+                ) : (
+                  <Col md={5}>
+                    <LoginView
+                      onLoggedIn={(user, token) => {
+                        setUser(user);
+                        setToken(token);
+                      }}
+                    />
+                  </Col>
+                )}
+              </>
+            }
+          />
+          {!user ? (
+            ///// Login/Signup View /////
+            <Col md={5}>
+              <LoginView
+                onLoggedIn={(user, token) => {
+                  setUser(user);
+                  setToken(token);
+                }}
+              />
             </Col>
-          </Row>
-          <Row className="justify-content-md-center">
-            {movies
-              .filter(
-                (movie) =>
-                  movie.genre.name === selectedMovie.genre.name &&
-                  movie.title !== selectedMovie.title
-              )
-              .map((movie) => (
-                <Col className="mb-5" key={movie.id} md={3}>
-                  <MovieCard
-                    movie={movie}
-                    onMovieClick={(newSelectedMovie) => {
-                      setSelectedMovie(newSelectedMovie);
-                    }}
-                  />
-                </Col>
-              ))}
-          </Row>
-        </>
-      ) : movies.length === 0 ? (
-        ///// No Movies /////
-        <Col>There are no movies!</Col>
-      ) : (
-        ///// View All Movie Cards /////
-        <>
-          <Col className="mb-5">
-            <Button
-              variant="primary"
-              onClick={() => {
-                setUser(null);
-                setToken(null);
-                localStorage.clear();
-              }}
-            >
-              Logout
-            </Button>
-          </Col>
-          <Row>
-            {movies.map((movie) => (
-              <Col className="mb-5" key={movie.id} md={3}>
-                <MovieCard
-                  movie={movie}
-                  onMovieClick={(newSelectedMovie) => {
-                    setSelectedMovie(newSelectedMovie);
+          ) : selectedMovie ? (
+            ///// Movie View /////
+            <>
+              <Col md={8}>
+                <MovieView
+                  movie={selectedMovie}
+                  onBackClick={() => {
+                    setSelectedMovie(null);
                   }}
                 />
               </Col>
-            ))}
-          </Row>
-        </>
-      )}
-    </Row>
+              <Row className="justify-content-md-center">
+                <hr />
+                <Col md={3}>
+                  <h2>Similar Movies</h2>
+                </Col>
+              </Row>
+              <Row className="justify-content-md-center">
+                {movies
+                  .filter(
+                    (movie) =>
+                      movie.genre.name === selectedMovie.genre.name &&
+                      movie.title !== selectedMovie.title
+                  )
+                  .map((movie) => (
+                    <Col className="mb-5" key={movie.id} md={3}>
+                      <MovieCard
+                        movie={movie}
+                        onMovieClick={(newSelectedMovie) => {
+                          setSelectedMovie(newSelectedMovie);
+                        }}
+                      />
+                    </Col>
+                  ))}
+              </Row>
+            </>
+          ) : movies.length === 0 ? (
+            ///// No Movies /////
+            <Col>There are no movies!</Col>
+          ) : (
+            ///// View All Movie Cards /////
+            <>
+              <Col className="mb-5">
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    setUser(null);
+                    setToken(null);
+                    localStorage.clear();
+                  }}
+                >
+                  Logout
+                </Button>
+              </Col>
+              <Row>
+                {movies.map((movie) => (
+                  <Col className="mb-5" key={movie.id} md={3}>
+                    <MovieCard
+                      movie={movie}
+                      onMovieClick={(newSelectedMovie) => {
+                        setSelectedMovie(newSelectedMovie);
+                      }}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            </>
+          )}
+        </Routes>
+      </Row>
+    </BrowserRouter>
   );
 
   //   if (!user) {
