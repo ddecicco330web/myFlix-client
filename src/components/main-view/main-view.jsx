@@ -3,49 +3,41 @@ import { MovieCard } from '../movie-card/movie-card';
 import { MovieView } from '../movie-view/movie-view';
 import { LoginView } from '../login-view/login-view';
 import { SignupView } from '../signup-view/signup-view';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import Button from 'react-bootstrap/Button';
+import { Col, Row } from 'react-bootstrap';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { NavigationBar } from '../navigation-bar/navigation-bar';
 import { Container } from 'react-bootstrap';
+import { GetMovies, GetUsers } from '../../services/api-calls';
+import { ProfileView } from '../profile-view/profile-view';
+import { EditProfileView } from '../edit-profile-view/edit-profile-view';
 
 export const MainView = () => {
+  if (localStorage.getItem('user') === 'undefined') {
+    localStorage.clear();
+  }
   const storedUser = JSON.parse(localStorage.getItem('user'));
   const storedToken = localStorage.getItem('token');
+
+  console.log(storedUser);
 
   const [movies, setMovies] = useState([]);
   const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
+  const [users, setUsers] = useState([]);
+
+  const [newUsername, setNewUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [newBirthday, setNewBirthday] = useState('');
 
   useEffect(() => {
     if (!token) {
       return;
     }
 
-    fetch('https://my-flix330.herokuapp.com/movies', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        const moviesFromAPI = data.map((doc) => {
-          return {
-            id: doc._id,
-            title: doc.Title,
-            director: {
-              name: doc.Director?.[0].Name
-            },
-            description: doc.Description,
-            genre: {
-              name: doc.Genre?.Name
-            },
-            image: doc.ImagePath
-          };
-        });
-        console.log(moviesFromAPI);
-        setMovies(moviesFromAPI);
-      })
-      .catch((err) => console.log(err));
+    GetMovies(token, setMovies);
+
+    GetUsers(token, setUsers);
   }, [token]);
 
   return (
@@ -96,36 +88,101 @@ export const MainView = () => {
             />
 
             <Route
-              path="/movies/:movieTitle"
+              path="/movies/:movieID"
               element={
                 !user ? (
                   <Navigate to="/login" />
                 ) : (
-                  <>
-                    <Col md={8}>
-                      <MovieView movies={movies} />
-                    </Col>
+                  <Col md={8}>
+                    <MovieView
+                      movies={movies}
+                      user={user}
+                      token={token}
+                      setUser={setUser}
+                      similarMovies={(movie) => {
+                        return (
+                          <>
+                            <hr />
+                            <Row className="text-center">
+                              <Col>
+                                <h2>Similar Movies</h2>
+                              </Col>
+                            </Row>
+                            <Row className="justify-content-md-center">
+                              {movies
+                                .filter(
+                                  (tempMovie) =>
+                                    movie.genre.name === tempMovie.genre.name &&
+                                    movie.title !== tempMovie.title
+                                )
+                                .map((tempMovie) => (
+                                  <Col
+                                    className="mb-5"
+                                    key={tempMovie.id}
+                                    md={3}
+                                  >
+                                    <MovieCard movie={tempMovie} />
+                                  </Col>
+                                ))}
+                            </Row>
+                          </>
+                        );
+                      }}
+                    />
+                  </Col>
+                )
+              }
+            />
 
-                    {/* <Row className="justify-center-md-center">
-                      <hr />
-                      <Col md={3}>
-                        <h2>Similar Movies</h2>
-                      </Col>
-                    </Row> */}
-                    {/* <Row className="justify-content-md-center">
-                    {movies
-                      .filter(
-                        (movie) =>
-                          movie.genre.name === selectedMovie.genre.name &&
-                          movie.title !== selectedMovie.title
-                      )
-                      .map((movie) => (
-                        <Col className="mb-5" key={movie.id} md={3}>
-                          <MovieCard movie={movie} />
-                        </Col>
-                      ))}
-                  </Row> */}
-                  </>
+            <Route
+              path="/users/:username"
+              element={
+                !user ? (
+                  <Navigate to="/login" />
+                ) : (
+                  <Col>
+                    <ProfileView
+                      users={users}
+                      token={token}
+                      movies={movies}
+                      resetChanges={(user) => {
+                        setNewUsername(user.username);
+                        setNewPassword('');
+                        setNewEmail(user.email);
+                        setNewBirthday(user.birthday);
+                      }}
+                      onDelete={() => {
+                        setUser(null);
+                        setToken(null);
+                        localStorage.clear();
+                      }}
+                    />
+                  </Col>
+                )
+              }
+            />
+
+            <Route
+              path="/users/:username/editProfile"
+              element={
+                !user ? (
+                  <Navigate to="/login" />
+                ) : (
+                  <Col>
+                    <EditProfileView
+                      token={token}
+                      users={users}
+                      setUser={setUser}
+                      newUsername={newUsername}
+                      setNewUsername={setNewUsername}
+                      newPassword={newPassword}
+                      setNewPassword={setNewPassword}
+                      newEmail={newEmail}
+                      setNewEmail={setNewEmail}
+                      newBirthday={newBirthday}
+                      setNewBirthday={setNewBirthday}
+                    />
+                  </Col>
                 )
               }
             />
