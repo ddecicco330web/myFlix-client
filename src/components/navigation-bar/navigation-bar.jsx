@@ -29,7 +29,7 @@ export const NavigationBar = ({ user, onLoggedOut }) => {
                 <Nav.Link
                   className="text-light"
                   as={Link}
-                  to="/users/:username"
+                  to={`/users/${encodeURIComponent(user.Username)}`}
                 >
                   Profile
                 </Nav.Link>
