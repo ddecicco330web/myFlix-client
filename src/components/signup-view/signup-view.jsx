@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { signup } from '../../services/api-calls';
+import { Signup } from '../../services/api-calls';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import { useNavigate } from 'react-router';
 
 export const SignupView = () => {
   const [username, setUsername] = useState('');
@@ -10,6 +11,7 @@ export const SignupView = () => {
   const [email, setEmail] = useState('');
   const [birthday, setBirthday] = useState('');
 
+  const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -20,7 +22,8 @@ export const SignupView = () => {
       Birthday: birthday
     };
 
-    signup(data);
+    Signup(data);
+    navigate('../login', { replace: true });
   };
 
   return (

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { login } from '../../services/api-calls';
+import { Login } from '../../services/api-calls';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -11,7 +11,7 @@ export const LoginView = ({ onLoggedIn }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    login(username, password, onLoggedIn);
+    Login(username, password, onLoggedIn);
   };
 
   return (
