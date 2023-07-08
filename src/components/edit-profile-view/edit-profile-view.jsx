@@ -1,9 +1,10 @@
-import { useParams } from 'react-router';
-import { Card, Button, Form } from 'react-bootstrap';
+import { useParams, useNavigate } from 'react-router';
+import { Card, Button, Form, Row } from 'react-bootstrap';
 import { UpdateUser } from '../../services/api-calls';
+import { useEffect } from 'react';
 
 export const EditProfileView = ({
-  users,
+  user,
   newUsername,
   setNewUsername,
   newPassword,
@@ -13,13 +14,23 @@ export const EditProfileView = ({
   newBirthday,
   setNewBirthday,
   token,
-  setUser
+  setUser,
+  resetChanges
 }) => {
-  if (users.length === 0) {
+  const { username } = useParams();
+  const navigate = useNavigate();
+
+  if (!user) {
     return;
   }
-  const { username } = useParams();
-  const user = users.find((arrUser) => arrUser.username === username);
+
+  useEffect(() => {
+    resetChanges(user);
+  }, []);
+
+  if (newBirthday === '') {
+    return;
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -32,13 +43,17 @@ export const EditProfileView = ({
     };
 
     UpdateUser(user, userData, token, setUser);
+
+    navigate(`../users/${encodeURIComponent(userData.Username)}`, {
+      replace: true
+    });
   };
 
   let date = new Date(newBirthday);
 
   let dateString = new Date(date.getTime()).toISOString().split('T')[0];
 
-  return (
+  return username === user.Username ? (
     <Card bg="secondary" className="custom-card">
       <Card.Body>
         <Form onSubmit={handleSubmit}>
@@ -88,5 +103,7 @@ export const EditProfileView = ({
         </Form>
       </Card.Body>
     </Card>
+  ) : (
+    <Row>Invalid username</Row>
   );
 };
