@@ -1,13 +1,21 @@
 import { useParams } from 'react-router';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import {
+  AddFavoriteMovie,
+  RemoveFromFavorites
+} from '../../services/api-calls';
 
-export const MovieView = ({ movies, user, token, similarMovies }) => {
+export const MovieView = ({ movies, user, token, similarMovies, setUser }) => {
   if (movies.length === 0) {
     return;
   }
+
+  console.log(user);
   const { movieID } = useParams();
   const movie = movies.find((arrMovie) => arrMovie.id === movieID);
+
+  const favorite = user.FavoriteMovies.includes(movie.id);
 
   return (
     <>
@@ -25,31 +33,21 @@ export const MovieView = ({ movies, user, token, similarMovies }) => {
             Description: {movie.description}
           </Card.Text>
           <Card.Text className="mb-1 ms-1">Genre: {movie.genre.name}</Card.Text>
-          <Button
-            onClick={() => {
-              fetch(
-                `https://my-flix330.herokuapp.com/users/${encodeURIComponent(
-                  user.Username
-                )}/movies/${encodeURIComponent(movie.id)}`,
-                {
-                  method: 'POST',
-                  headers: {
-                    Authorization: `Bearer ${token}`
-                  }
-                }
-              )
-                .then((response) => {
-                  if (response.ok) {
-                    alert('Added to favorites');
-                  } else {
-                    alert('Unable to add to favorites');
-                  }
-                })
-                .catch((e) => console.log(e));
-            }}
-          >
-            Favorite
-          </Button>
+          {!favorite ? (
+            <Button
+              onClick={() => {
+                AddFavoriteMovie(user, setUser, movie, token);
+              }}
+            >
+              Favorite
+            </Button>
+          ) : (
+            <Button
+              onClick={() => RemoveFromFavorites(user, movie, token, setUser)}
+            >
+              Unfavorite
+            </Button>
+          )}
         </Card>
       </Card>
       {similarMovies(movie)}
