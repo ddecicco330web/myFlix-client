@@ -3,11 +3,10 @@ import { MovieCard } from '../movie-card/movie-card';
 import { MovieView } from '../movie-view/movie-view';
 import { LoginView } from '../login-view/login-view';
 import { SignupView } from '../signup-view/signup-view';
-import { Col, Row } from 'react-bootstrap';
+import { Col, Row, Container } from 'react-bootstrap';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { NavigationBar } from '../navigation-bar/navigation-bar';
-import { Container } from 'react-bootstrap';
-import { GetMovies, GetUsers } from '../../services/api-calls';
+import { GetMovies } from '../../services/api-calls';
 import { ProfileView } from '../profile-view/profile-view';
 import { EditProfileView } from '../edit-profile-view/edit-profile-view';
 
@@ -18,12 +17,9 @@ export const MainView = () => {
   const storedUser = JSON.parse(localStorage.getItem('user'));
   const storedToken = localStorage.getItem('token');
 
-  console.log(storedUser);
-
   const [movies, setMovies] = useState([]);
   const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
-  const [users, setUsers] = useState([]);
 
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -36,8 +32,6 @@ export const MainView = () => {
     }
 
     GetMovies(token, setMovies);
-
-    GetUsers(token, setUsers);
   }, [token]);
 
   return (
@@ -101,7 +95,7 @@ export const MainView = () => {
                       setUser={setUser}
                       similarMovies={(movie) => {
                         return (
-                          <>
+                          <Row>
                             <hr />
                             <Row className="text-center">
                               <Col>
@@ -125,7 +119,7 @@ export const MainView = () => {
                                   </Col>
                                 ))}
                             </Row>
-                          </>
+                          </Row>
                         );
                       }}
                     />
@@ -142,15 +136,10 @@ export const MainView = () => {
                 ) : (
                   <Col>
                     <ProfileView
-                      users={users}
+                      user={user}
                       token={token}
                       movies={movies}
-                      resetChanges={(user) => {
-                        setNewUsername(user.username);
-                        setNewPassword('');
-                        setNewEmail(user.email);
-                        setNewBirthday(user.birthday);
-                      }}
+                      setUser={setUser}
                       onDelete={() => {
                         setUser(null);
                         setToken(null);
@@ -170,8 +159,8 @@ export const MainView = () => {
                 ) : (
                   <Col>
                     <EditProfileView
+                      user={user}
                       token={token}
-                      users={users}
                       setUser={setUser}
                       newUsername={newUsername}
                       setNewUsername={setNewUsername}
@@ -181,6 +170,12 @@ export const MainView = () => {
                       setNewEmail={setNewEmail}
                       newBirthday={newBirthday}
                       setNewBirthday={setNewBirthday}
+                      resetChanges={(user) => {
+                        setNewUsername(user.Username);
+                        setNewPassword('');
+                        setNewEmail(user.Email);
+                        setNewBirthday(user.Birthday);
+                      }}
                     />
                   </Col>
                 )
