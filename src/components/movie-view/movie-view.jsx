@@ -5,14 +5,21 @@ import {
   AddFavoriteMovie,
   RemoveFromFavorites
 } from '../../services/api-calls';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser } from '../../redux/reducers/user';
 
-export const MovieView = ({ movies, user, token, similarMovies, setUser }) => {
+export const MovieView = ({ similarMovies }) => {
+  const movies = useSelector((state) => state.movies.list);
+  const user = useSelector((state) => state.user.user);
+  const token = useSelector((state) => state.user.token);
+
+  const dispatch = useDispatch();
+
+  const { movieID } = useParams();
+
   if (movies.length === 0) {
     return;
   }
-
-  console.log(user);
-  const { movieID } = useParams();
   const movie = movies.find((arrMovie) => arrMovie.id === movieID);
 
   const favorite = user.FavoriteMovies.includes(movie.id);
@@ -36,14 +43,22 @@ export const MovieView = ({ movies, user, token, similarMovies, setUser }) => {
           {!favorite ? (
             <Button
               onClick={() => {
-                AddFavoriteMovie(user, setUser, movie, token);
+                AddFavoriteMovie(user, movie, token).then((data) => {
+                  localStorage.setItem('user', JSON.stringify(data));
+                  dispatch(setUser(data));
+                });
               }}
             >
               Favorite
             </Button>
           ) : (
             <Button
-              onClick={() => RemoveFromFavorites(user, movie, token, setUser)}
+              onClick={() =>
+                RemoveFromFavorites(user, movie, token).then((data) => {
+                  localStorage.setItem('user', JSON.stringify(data));
+                  dispatch(setUser(data));
+                })
+              }
             >
               Unfavorite
             </Button>

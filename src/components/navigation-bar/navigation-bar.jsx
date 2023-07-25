@@ -1,11 +1,20 @@
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser, setToken } from '../../redux/reducers/user';
 
-export const NavigationBar = ({ user, onLoggedOut }) => {
+//import { Col } from 'react-bootstrap';
+
+export const NavigationBar = () => {
+  const user = useSelector((state) => state.user.user);
+  const token = useSelector((state) => state.user.token);
+
+  const dispatch = useDispatch();
+
   return (
-    <Navbar bg="primary" expand="lg">
+    <Navbar variant="dark" bg="primary" expand="lg">
       <Container>
-        <Navbar.Brand className="text-light" as={Link} to="/">
+        <Navbar.Brand className="text-light ms-1" as={Link} to="/">
           myFlix
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -37,7 +46,11 @@ export const NavigationBar = ({ user, onLoggedOut }) => {
                   as={Link}
                   to="/login"
                   className="text-light"
-                  onClick={onLoggedOut}
+                  onClick={() => {
+                    dispatch(setUser(null));
+                    dispatch(setToken(null));
+                    localStorage.clear();
+                  }}
                 >
                   Logout
                 </Nav.Link>

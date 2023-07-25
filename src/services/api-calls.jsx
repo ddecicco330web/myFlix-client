@@ -1,5 +1,5 @@
-export const Login = (username, password, onLoggedIn) => {
-  fetch(
+export const Login = (username, password) => {
+  return fetch(
     'https://my-flix330.herokuapp.com/login?' +
       new URLSearchParams({
         Username: username,
@@ -15,7 +15,7 @@ export const Login = (username, password, onLoggedIn) => {
       if (data.user) {
         localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('token', data.token);
-        onLoggedIn(data.user, data.token);
+        return data;
       } else {
         alert('No such user');
       }
@@ -42,36 +42,19 @@ export const Signup = (data) => {
   });
 };
 
-export const GetMovies = (token, setMovies) => {
-  fetch('https://my-flix330.herokuapp.com/movies', {
+export const GetMovies = (token) => {
+  return fetch('https://my-flix330.herokuapp.com/movies', {
     headers: { Authorization: `Bearer ${token}` }
   })
     .then((response) => response.json())
-    .then((data) => {
-      const moviesFromAPI = data.map((doc) => {
-        return {
-          id: doc._id,
-          title: doc.Title,
-          director: {
-            name: doc.Director?.[0].Name
-          },
-          description: doc.Description,
-          genre: {
-            name: doc.Genre?.Name
-          },
-          image: doc.ImagePath
-        };
-      });
-      setMovies(moviesFromAPI);
-    })
+    .then((data) => data)
     .catch((err) => {
-      console.log(err);
       alert('Unable to get movies');
     });
 };
 
-export const UpdateUser = (user, userData, token, setUser) => {
-  fetch(
+export const UpdateUser = (user, userData, token) => {
+  return fetch(
     `https://my-flix330.herokuapp.com/users/${encodeURIComponent(
       user.Username
     )}`,
@@ -92,16 +75,12 @@ export const UpdateUser = (user, userData, token, setUser) => {
         alert('Update failed');
       }
     })
-    .then((data) => {
-      localStorage.setItem('user', JSON.stringify(data));
-      setUser(data);
-    })
     .catch((e) => {
-      console.log(e);
+      alert(e);
     });
 };
 
-export const DeleteUser = (username, token, onDelete) => {
+export const DeleteUser = (username, token) => {
   fetch(
     `https://my-flix330.herokuapp.com/users/${encodeURIComponent(username)}`,
     {
@@ -113,17 +92,16 @@ export const DeleteUser = (username, token, onDelete) => {
   )
     .then((response) => {
       if (response.ok) {
-        onDelete();
         alert('Deletion successful');
       } else {
         alert('Deletion failed');
       }
     })
-    .catch((e) => console.log(e));
+    .catch((e) => alert(e));
 };
 
-export const AddFavoriteMovie = (user, setUser, movie, token) => {
-  fetch(
+export const AddFavoriteMovie = (user, movie, token) => {
+  return fetch(
     `https://my-flix330.herokuapp.com/users/${encodeURIComponent(
       user.Username
     )}/movies/${encodeURIComponent(movie.id)}`,
@@ -142,15 +120,11 @@ export const AddFavoriteMovie = (user, setUser, movie, token) => {
         alert('Unable to add to favorites');
       }
     })
-    .then((data) => {
-      localStorage.setItem('user', JSON.stringify(data));
-      setUser(data);
-    })
-    .catch((e) => console.log(e));
+    .catch((e) => alert(e));
 };
 
-export const RemoveFromFavorites = (user, movie, token, setUser) => {
-  fetch(
+export const RemoveFromFavorites = (user, movie, token) => {
+  return fetch(
     `https://my-flix330.herokuapp.com/users/${encodeURIComponent(
       user.Username
     )}/movies/${encodeURIComponent(movie.id)}`,
@@ -169,9 +143,5 @@ export const RemoveFromFavorites = (user, movie, token, setUser) => {
         alert('Failed to remove movie');
       }
     })
-    .then((data) => {
-      localStorage.setItem('user', JSON.stringify(data));
-      setUser(data);
-    })
-    .catch((e) => console.log(e));
+    .catch((e) => alert(e));
 };

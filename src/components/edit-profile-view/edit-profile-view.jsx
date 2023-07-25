@@ -2,30 +2,37 @@ import { useParams, useNavigate } from 'react-router';
 import { Card, Button, Form, Row } from 'react-bootstrap';
 import { UpdateUser } from '../../services/api-calls';
 import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  setUsername,
+  setPassword,
+  setBirthday,
+  setEmail
+} from '../../redux/reducers/updatedUserInfo';
+import { setUser } from '../../redux/reducers/user';
 
-export const EditProfileView = ({
-  user,
-  newUsername,
-  setNewUsername,
-  newPassword,
-  setNewPassword,
-  newEmail,
-  setNewEmail,
-  newBirthday,
-  setNewBirthday,
-  token,
-  setUser,
-  resetChanges
-}) => {
+export const EditProfileView = () => {
+  const user = useSelector((state) => state.user.user);
+  const token = useSelector((state) => state.user.token);
+
+  const newUsername = useSelector((state) => state.updatedUserInfo.username);
+  const newPassword = useSelector((state) => state.updatedUserInfo.password);
+  const newEmail = useSelector((state) => state.updatedUserInfo.email);
+  const newBirthday = useSelector((state) => state.updatedUserInfo.birthday);
+
   const { username } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   if (!user) {
     return;
   }
 
   useEffect(() => {
-    resetChanges(user);
+    dispatch(setUsername(user.Username));
+    dispatch(setPassword(''));
+    dispatch(setEmail(user.Email));
+    dispatch(setBirthday(user.Birthday));
   }, []);
 
   if (newBirthday === '') {
@@ -42,7 +49,10 @@ export const EditProfileView = ({
       Birthday: newBirthday
     };
 
-    UpdateUser(user, userData, token, setUser);
+    UpdateUser(user, userData, token).then((data) => {
+      localStorage.setItem('user', JSON.stringify(data));
+      dispatch(setUser(data));
+    });
 
     navigate(`../users/${encodeURIComponent(userData.Username)}`, {
       replace: true
@@ -62,7 +72,7 @@ export const EditProfileView = ({
             <Form.Control
               type="text"
               value={newUsername}
-              onChange={(e) => setNewUsername(e.target.value)}
+              onChange={(e) => dispatch(setUsername(e.target.value))}
               required
               minLength={5}
             />
@@ -73,7 +83,7 @@ export const EditProfileView = ({
             <Form.Control
               type="password"
               value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              onChange={(e) => dispatch(setPassword(e.target.value))}
               required
             />
           </Form.Group>
@@ -83,7 +93,7 @@ export const EditProfileView = ({
             <Form.Control
               type="email"
               value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
+              onChange={(e) => dispatch(setEmail(e.target.value))}
               required
             />
           </Form.Group>
@@ -93,7 +103,7 @@ export const EditProfileView = ({
             <Form.Control
               type="date"
               value={dateString}
-              onChange={(e) => setNewBirthday(e.target.value)}
+              onChange={(e) => dispatch(setBirthday(e.target.value))}
               required
             />
           </Form.Group>

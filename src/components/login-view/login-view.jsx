@@ -3,15 +3,23 @@ import { Login } from '../../services/api-calls';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import { useDispatch } from 'react-redux';
+import { setUser, setToken } from '../../redux/reducers/user';
 
-export const LoginView = ({ onLoggedIn }) => {
+export const LoginView = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const dispatch = useDispatch();
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    Login(username, password, onLoggedIn);
+    Login(username, password).then((data) => {
+      console.log(data.user);
+      dispatch(setUser(data.user));
+      dispatch(setToken(data.token));
+    });
   };
 
   return (
