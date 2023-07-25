@@ -3,13 +3,20 @@ import { Card, Button, Col, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DeleteUser, RemoveFromFavorites } from '../../services/api-calls';
 import { MovieCard } from '../movie-card/movie-card';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser, setToken } from '../../redux/reducers/user';
 
-export const ProfileView = ({ user, onDelete, token, movies, setUser }) => {
+export const ProfileView = () => {
+  const user = useSelector((state) => state.user.user);
+  const token = useSelector((state) => state.user.token);
+  const movies = useSelector((state) => state.movies.list);
+
+  const dispatch = useDispatch();
+
   const { username } = useParams();
   if (!user) {
     return;
   }
-  console.log(user);
   let date = new Date(user.Birthday);
 
   let dateString = new Date(date.getTime()).toISOString().split('T')[0];
@@ -34,7 +41,10 @@ export const ProfileView = ({ user, onDelete, token, movies, setUser }) => {
         <Button
           className="mt-1 ms-1 me-1 mb-1"
           onClick={() => {
-            DeleteUser(username, token, onDelete);
+            DeleteUser(username, token);
+            dispatch(setUser(null));
+            dispatch(setToken(null));
+            localStorage.clear();
           }}
         >
           Delete Account
@@ -54,7 +64,10 @@ export const ProfileView = ({ user, onDelete, token, movies, setUser }) => {
               <Button
                 className="mt-1"
                 onClick={() => {
-                  RemoveFromFavorites(user, movie, token, setUser);
+                  RemoveFromFavorites(user, movie, token).then((data) => {
+                    localStorage.setItem('user', JSON.stringify(data));
+                    dispatch(setUser(data));
+                  });
                 }}
               >
                 Remove

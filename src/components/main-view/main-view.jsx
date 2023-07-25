@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { MovieCard } from '../movie-card/movie-card';
 import { MovieView } from '../movie-view/movie-view';
 import { LoginView } from '../login-view/login-view';
@@ -9,42 +9,56 @@ import { NavigationBar } from '../navigation-bar/navigation-bar';
 import { GetMovies } from '../../services/api-calls';
 import { ProfileView } from '../profile-view/profile-view';
 import { EditProfileView } from '../edit-profile-view/edit-profile-view';
+import { useSelector, useDispatch } from 'react-redux';
+import { setMovies } from '../../redux/reducers/movies';
+import { MoviesList } from '../movies-list/movies-list';
 
 export const MainView = () => {
   if (localStorage.getItem('user') === 'undefined') {
     localStorage.clear();
   }
-  const storedUser = JSON.parse(localStorage.getItem('user'));
-  const storedToken = localStorage.getItem('token');
 
-  const [movies, setMovies] = useState([]);
-  const [user, setUser] = useState(storedUser ? storedUser : null);
-  const [token, setToken] = useState(storedToken ? storedToken : null);
+  const movies = useSelector((state) => {
+    return state.movies.list;
+  });
+  const user = useSelector((state) => {
+    return state.user.user;
+  });
+  const token = useSelector((state) => {
+    return state.user.token;
+  });
 
-  const [newUsername, setNewUsername] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [newEmail, setNewEmail] = useState('');
-  const [newBirthday, setNewBirthday] = useState('');
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!token) {
       return;
     }
-
-    GetMovies(token, setMovies);
+    GetMovies(token).then((data) => {
+      const moviesFromAPI = data.map((doc) => {
+        return {
+          id: doc._id,
+          title: doc.Title,
+          director: {
+            name: doc.Director?.[0].Name
+          },
+          description: doc.Description,
+          genre: {
+            name: doc.Genre?.Name
+          },
+          image: doc.ImagePath
+        };
+      });
+      dispatch(setMovies(moviesFromAPI));
+    });
   }, [token]);
 
   return (
     <BrowserRouter>
-      <NavigationBar
-        user={user}
-        onLoggedOut={() => {
-          setUser(null);
-          setToken(null);
-          localStorage.clear();
-        }}
-      />
       <Container>
+        <Row>
+          <NavigationBar />
+        </Row>
         <Row className="justify-content-md-center mt-5">
           <Routes>
             <Route
@@ -54,7 +68,7 @@ export const MainView = () => {
                   {user ? (
                     <Navigate to="/" />
                   ) : (
-                    <Col md={5}>
+                    <Col sm={12}>
                       <SignupView />
                     </Col>
                   )}
@@ -68,13 +82,8 @@ export const MainView = () => {
                   {user ? (
                     <Navigate to="/" />
                   ) : (
-                    <Col md={5}>
-                      <LoginView
-                        onLoggedIn={(user, token) => {
-                          setUser(user);
-                          setToken(token);
-                        }}
-                      />
+                    <Col sm={12}>
+                      <LoginView />
                     </Col>
                   )}
                 </>
@@ -89,10 +98,6 @@ export const MainView = () => {
                 ) : (
                   <Col md={8}>
                     <MovieView
-                      movies={movies}
-                      user={user}
-                      token={token}
-                      setUser={setUser}
                       similarMovies={(movie) => {
                         return (
                           <Row>
@@ -135,17 +140,7 @@ export const MainView = () => {
                   <Navigate to="/login" />
                 ) : (
                   <Col>
-                    <ProfileView
-                      user={user}
-                      token={token}
-                      movies={movies}
-                      setUser={setUser}
-                      onDelete={() => {
-                        setUser(null);
-                        setToken(null);
-                        localStorage.clear();
-                      }}
-                    />
+                    <ProfileView />
                   </Col>
                 )
               }
@@ -158,25 +153,7 @@ export const MainView = () => {
                   <Navigate to="/login" />
                 ) : (
                   <Col>
-                    <EditProfileView
-                      user={user}
-                      token={token}
-                      setUser={setUser}
-                      newUsername={newUsername}
-                      setNewUsername={setNewUsername}
-                      newPassword={newPassword}
-                      setNewPassword={setNewPassword}
-                      newEmail={newEmail}
-                      setNewEmail={setNewEmail}
-                      newBirthday={newBirthday}
-                      setNewBirthday={setNewBirthday}
-                      resetChanges={(user) => {
-                        setNewUsername(user.Username);
-                        setNewPassword('');
-                        setNewEmail(user.Email);
-                        setNewBirthday(user.Birthday);
-                      }}
-                    />
+                    <EditProfileView />
                   </Col>
                 )
               }
@@ -190,13 +167,9 @@ export const MainView = () => {
                 ) : movies.length === 0 ? (
                   <Col>There are no movies!</Col>
                 ) : (
-                  <Row>
-                    {movies.map((movie) => (
-                      <Col className="mb-5" key={movie.id} md={3}>
-                        <MovieCard movie={movie} />
-                      </Col>
-                    ))}
-                  </Row>
+                  <>
+                    <MoviesList />
+                  </>
                 )
               }
             />
