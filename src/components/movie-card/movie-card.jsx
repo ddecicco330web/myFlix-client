@@ -1,8 +1,19 @@
 import PropTypes from 'prop-types';
-import { Card } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  AddFavoriteMovie,
+  RemoveFromFavorites
+} from '../../services/api-calls';
+import { setUser } from '../../redux/reducers/user';
 
 export const MovieCard = ({ movie }) => {
+  const user = useSelector((state) => state.user.user);
+  const token = useSelector((state) => state.user.token);
+
+  const dispatch = useDispatch();
+
   return (
     <>
       <Card
@@ -17,6 +28,31 @@ export const MovieCard = ({ movie }) => {
           <Card.Text>{movie.director.name}</Card.Text>
         </Card.Body>
       </Card>
+      {user.FavoriteMovies.includes(movie.id) ? (
+        <Button
+          className="mt-1"
+          onClick={() => {
+            RemoveFromFavorites(user, movie, token).then((data) => {
+              localStorage.setItem('user', JSON.stringify(data));
+              dispatch(setUser(data));
+            });
+          }}
+        >
+          Unfavorite
+        </Button>
+      ) : (
+        <Button
+          className="mt-1"
+          onClick={() => {
+            AddFavoriteMovie(user, movie, token).then((data) => {
+              localStorage.setItem('user', JSON.stringify(data));
+              dispatch(setUser(data));
+            });
+          }}
+        >
+          Favorite
+        </Button>
+      )}
     </>
   );
 };

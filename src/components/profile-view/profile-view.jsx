@@ -59,19 +59,8 @@ export const ProfileView = () => {
       <Row>
         {favoriteMovies.map((movie) => {
           return (
-            <Col className="mb-5 mt-1" key={movie.id} md={3}>
+            <Col className="mb-5 mt-1" key={movie.id} sm={6} md={3}>
               <MovieCard movie={movie} />
-              <Button
-                className="mt-1"
-                onClick={() => {
-                  RemoveFromFavorites(user, movie, token).then((data) => {
-                    localStorage.setItem('user', JSON.stringify(data));
-                    dispatch(setUser(data));
-                  });
-                }}
-              >
-                Remove
-              </Button>
             </Col>
           );
         })}
