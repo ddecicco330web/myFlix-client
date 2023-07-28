@@ -13186,6 +13186,10 @@ textarea.form-control-lg {
   }
 }
 
+body {
+  background-color: #d3d3d3;
+}
+
 .no-border {
   border: none;
 }
@@ -13200,6 +13204,11 @@ textarea.form-control-lg {
 
 .movie-card:hover, .movie-card:focus {
   opacity: .7;
+}
+
+.card-img-top {
+  height: 400px;
+  margin: auto;
 }
 
 /*# sourceMappingURL=index.ce1d6491.css.map */
