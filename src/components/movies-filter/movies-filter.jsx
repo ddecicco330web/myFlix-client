@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Form } from 'react-bootstrap';
+import { Form, Col, Row, Card } from 'react-bootstrap';
 import { setFilter } from '../../redux/reducers/movies';
 
 export const MoviesFilter = () => {
@@ -8,12 +8,17 @@ export const MoviesFilter = () => {
   const dispatch = useDispatch();
 
   return (
-    <Form.Control
-      className="mb-2"
-      type="text"
-      placeholder="Search"
-      value={filter}
-      onChange={(e) => dispatch(setFilter(e.target.value))}
-    />
+    <Row className="justify-content-md-center">
+      <Col md={8}>
+        <Card className="mb-2 custom-card">
+          <Form.Control
+            type="text"
+            placeholder="Search"
+            value={filter}
+            onChange={(e) => dispatch(setFilter(e.target.value))}
+          />
+        </Card>
+      </Col>
+    </Row>
   );
 };

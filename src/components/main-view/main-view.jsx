@@ -12,6 +12,7 @@ import { EditProfileView } from '../edit-profile-view/edit-profile-view';
 import { useSelector, useDispatch } from 'react-redux';
 import { setMovies } from '../../redux/reducers/movies';
 import { MoviesList } from '../movies-list/movies-list';
+import { CastView } from '../cast-view/cast-view';
 
 export const MainView = () => {
   if (localStorage.getItem('user') === 'undefined') {
@@ -40,13 +41,20 @@ export const MainView = () => {
           id: doc._id,
           title: doc.Title,
           director: {
-            name: doc.Director?.[0].Name
+            name: doc.Director?.[0].Name,
+            bio: doc.Director?.[0].Bio,
+            birthYear: doc.Director?.[0].BirthYear,
+            image: doc.Director?.[0].ImagePath
           },
           description: doc.Description,
           genre: {
             name: doc.Genre?.Name
           },
-          image: doc.ImagePath
+          image: doc.ImagePath,
+          release: doc.ReleaseYear?.[0],
+          rating: doc.Rating?.[0],
+          trailer: doc.TrailerPath,
+          actors: doc.Actors
         };
       });
       dispatch(setMovies(moviesFromAPI));
@@ -96,39 +104,38 @@ export const MainView = () => {
                 !user ? (
                   <Navigate to="/login" />
                 ) : (
-                  <Col md={8}>
-                    <MovieView
-                      similarMovies={(movie) => {
-                        return (
-                          <Row>
-                            <hr />
-                            <Row className="text-center">
-                              <Col>
-                                <h2>Similar Movies</h2>
-                              </Col>
-                            </Row>
-                            <Row className="justify-content-md-center">
-                              {movies
-                                .filter(
-                                  (tempMovie) =>
-                                    movie.genre.name === tempMovie.genre.name &&
-                                    movie.title !== tempMovie.title
-                                )
-                                .map((tempMovie) => (
-                                  <Col
-                                    className="mb-5"
-                                    key={tempMovie.id}
-                                    md={3}
-                                  >
-                                    <MovieCard movie={tempMovie} />
-                                  </Col>
-                                ))}
-                            </Row>
+                  <MovieView
+                    similarMovies={(movie) => {
+                      return (
+                        <Row>
+                          <hr />
+                          <Row className="text-center">
+                            <Col>
+                              <h2>Similar Movies</h2>
+                            </Col>
                           </Row>
-                        );
-                      }}
-                    />
-                  </Col>
+                          <Row className="justify-content-md-center">
+                            {movies
+                              .filter(
+                                (tempMovie) =>
+                                  movie.genre.name === tempMovie.genre.name &&
+                                  movie.title !== tempMovie.title
+                              )
+                              .map((tempMovie) => (
+                                <Col
+                                  className="mb-5"
+                                  key={tempMovie.id}
+                                  sm={6}
+                                  md={3}
+                                >
+                                  <MovieCard movie={tempMovie} />
+                                </Col>
+                              ))}
+                          </Row>
+                        </Row>
+                      );
+                    }}
+                  />
                 )
               }
             />
@@ -155,6 +162,21 @@ export const MainView = () => {
                   <Col>
                     <EditProfileView />
                   </Col>
+                )
+              }
+            />
+
+            <Route
+              path="/cast/:castMemberName"
+              element={
+                !user ? (
+                  <Navigate to="/login" />
+                ) : movies.length === 0 ? (
+                  <Col>There are no movies!</Col>
+                ) : (
+                  <>
+                    <CastView />
+                  </>
                 )
               }
             />
