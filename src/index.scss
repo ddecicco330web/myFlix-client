@@ -3,6 +3,10 @@ $secondary: #84a7a1;
 
 @import 'node_modules/bootstrap/scss/bootstrap.scss';
 
+body {
+  background-color: lightgray;
+}
+
 .no-border {
   border: none;
 }
@@ -21,6 +25,6 @@ $secondary: #84a7a1;
 }
 
 .card-img-top {
-  height: 80%;
+  height: 400px;
   margin: auto;
 }

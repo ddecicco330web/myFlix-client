@@ -16,7 +16,6 @@ export const LoginView = () => {
     event.preventDefault();
 
     Login(username, password).then((data) => {
-      console.log(data.user);
       dispatch(setUser(data.user));
       dispatch(setToken(data.token));
     });
