@@ -1,13 +1,10 @@
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import { Navbar, Nav, Container, Image } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser, setToken } from '../../redux/reducers/user';
 
-//import { Col } from 'react-bootstrap';
-
 export const NavigationBar = () => {
   const user = useSelector((state) => state.user.user);
-  const token = useSelector((state) => state.user.token);
 
   const dispatch = useDispatch();
 
@@ -15,8 +12,13 @@ export const NavigationBar = () => {
     <Navbar variant="dark" bg="primary" expand="lg">
       <Container>
         <Navbar.Brand className="text-light ms-1" as={Link} to="/">
-          myFlix
+          <Image
+            src={require('../../imgs/myflix-logo.png')}
+            width={128}
+            height={64}
+          />
         </Navbar.Brand>
+
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
