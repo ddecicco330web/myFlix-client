@@ -27,8 +27,6 @@ export const CastView = () => {
       ? movie.director
       : movie.actors.find((actor) => actor.Name === castMemberName);
 
-  console.log(castMemberObj.ImagePath);
-
   return (
     <>
       <Row className="mb-1">

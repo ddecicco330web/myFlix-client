@@ -59,7 +59,7 @@ export const EditProfileView = () => {
     });
   };
 
-  let date = new Date(newBirthday);
+  const date = new Date(newBirthday);
 
   let dateString = new Date(date.getTime()).toISOString().split('T')[0];
 
